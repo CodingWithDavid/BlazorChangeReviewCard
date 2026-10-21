@@ -1,0 +1,74 @@
+<section class="review" aria-labelledby="@_headingId">
+    <h3 id="@_headingId">@Label</h3>
+
+    <dl class="comparison">
+        <div>
+            <dt>Original</dt>
+            <dd>@Before</dd>
+        </div>
+        <div class="proposed">
+            <dt>Proposed</dt>
+            <dd>@After</dd>
+        </div>
+    </dl>
+
+    <div class="actions">
+        <button type="button"
+                aria-disabled="@(Blocked ? "true" : "false")"
+                @onclick="Accept">
+            @(_saving ? "Accepting…" :
+                Accepted ? "Accepted ✓" : "Accept change")
+        </button>
+
+        <span role="status" class="@(_error is null ? "" : "error")">
+            @Status
+        </span>
+    </div>
+</section>
+
+@code {
+    [Parameter] public string Label { get; set; } = "Suggested change";
+    [Parameter] public string Before { get; set; } = "";
+    [Parameter] public string After { get; set; } = "";
+    [Parameter] public bool Accepted { get; set; }
+    [Parameter] public bool Busy { get; set; }
+    [Parameter] public EventCallback OnAccept { get; set; }
+
+    private readonly string _headingId = $"review-{Guid.NewGuid():N}";
+    private bool _saving;
+    private string? _error;
+
+    private bool Unchanged =>
+        string.Equals(Before, After, StringComparison.Ordinal);
+
+    private bool Blocked =>
+        Accepted || Busy || _saving || Unchanged || !OnAccept.HasDelegate;
+
+    private string Status =>
+        Accepted ? "Change accepted." :
+        _saving ? "Saving change…" :
+        Busy ? "Another operation is running." :
+        Unchanged ? "No change needed." :
+        _error ?? "Review before accepting.";
+
+    private async Task Accept()
+    {
+        if (Blocked) return;
+
+        _saving = true;
+        _error = null;
+        try
+        {
+            await OnAccept.InvokeAsync();
+        }
+        catch (Exception)
+        {
+            // Log details in the application's persistence layer.
+            _error = "Could not accept the change. Try again.";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

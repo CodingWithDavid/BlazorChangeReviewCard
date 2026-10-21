@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ChangeReviewCard.csproj" />
+  <Project Path="ChangeReviewCard.Tests/ChangeReviewCard.Tests.csproj" />
+</Solution>

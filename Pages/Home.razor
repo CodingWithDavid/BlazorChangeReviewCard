@@ -1,0 +1,280 @@
+@page "/"
+
+<PageTitle>Change Review | Review proposed changes</PageTitle>
+
+<section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-inner">
+        <div class="hero-copy">
+            <div class="eyebrow">
+                <span class="eyebrow-dot"></span>
+                A clearer way to review changes
+            </div>
+            <h1>Review every change<br class="desktop-break" /> with <span>confidence.</span></h1>
+            <p class="hero-description">
+                See what changed, understand what’s proposed, and accept only when it looks right.
+                A focused review experience for the details that matter.
+            </p>
+            <div class="hero-actions">
+                <a class="primary-action" href="#review-queue">
+                    Review suggestions
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+                <a class="secondary-action" href="#how-it-works">How it works</a>
+            </div>
+            <div class="trust-line">
+                <span class="trust-check" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" fill="none">
+                        <path d="m5 10 3.2 3.2L15 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+                You stay in control of every accepted change
+            </div>
+        </div>
+
+        <div class="preview-wrap" aria-label="Review queue summary">
+            <div class="preview-halo" aria-hidden="true"></div>
+            <div class="preview-card">
+                <div class="preview-top">
+                    <div class="window-dots" aria-hidden="true">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <span class="preview-caption">REVIEW SESSION</span>
+                    <span class="live-indicator"><span></span> ACTIVE</span>
+                </div>
+                <div class="preview-heading">
+                    <div>
+                        <span class="preview-overline">YOUR QUEUE</span>
+                        <h2>Suggested changes</h2>
+                    </div>
+                    <span class="queue-count">@PendingCount.ToString("00")</span>
+                </div>
+                <div class="preview-items">
+                    <div class="preview-item">
+                        <span class="preview-icon file-icon" aria-hidden="true">PDF</span>
+                        <span class="preview-item-copy"><strong>Filename cleanup</strong><small>Warehouse_Expansion.pdf</small></span>
+                        <span class="preview-state">Ready</span>
+                    </div>
+                    <div class="preview-item">
+                        <span class="preview-icon data-icon" aria-hidden="true">
+                            <svg viewBox="0 0 20 20" fill="none"><path d="M4 5h12M4 10h8M4 15h10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" /></svg>
+                        </span>
+                        <span class="preview-item-copy"><strong>Data correction</strong><small>Location details</small></span>
+                        <span class="preview-state">Ready</span>
+                    </div>
+                </div>
+                <div class="preview-footer">
+                    <span><strong>@AcceptedCount</strong> accepted</span>
+                    <span class="preview-progress" aria-label="@AcceptedCount of @ChangedCount suggestions accepted">
+                        <span style="width: @ProgressPercentage%"></span>
+                    </span>
+                    <span><strong>@ChangedCount</strong> total</span>
+                </div>
+                <a class="preview-review-link" href="#review-queue">
+                    Open review queue
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </a>
+            </div>
+            <div class="floating-note">
+                <span class="floating-check" aria-hidden="true">✓</span>
+                <span><strong>Clear by design</strong><small>Original vs. proposed</small></span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="summary-band" aria-label="Review summary">
+    <div class="summary-inner">
+        <div class="summary-stat">
+            <span class="summary-number">@_items.Count.ToString("00")</span>
+            <span class="summary-label">Suggestions in this demo</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+            <span class="summary-number">@PendingCount.ToString("00")</span>
+            <span class="summary-label">Awaiting your review</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-stat">
+            <span class="summary-number">@AcceptedCount.ToString("00")</span>
+            <span class="summary-label">Accepted so far</span>
+        </div>
+        <div class="summary-note">
+            <span class="summary-note-icon" aria-hidden="true">i</span>
+            Demo values update as you review
+        </div>
+    </div>
+</section>
+
+<section class="queue-section" id="review-queue">
+    <div class="section-heading">
+        <div>
+            <span class="section-kicker">YOUR WORKSPACE</span>
+            <h2>Review suggestions</h2>
+            <p>Compare each original with its proposed update before accepting.</p>
+        </div>
+        <span class="queue-badge"><span></span> @PendingCount pending</span>
+    </div>
+
+    <div class="toolbar">
+        <button type="button" class="btn btn-primary"
+                aria-disabled="@(AcceptAllBlocked ? "true" : "false")"
+                @onclick="AcceptAll">
+            @(_acceptingAll ? "Accepting all…" : "Accept all pending")
+            @if (!_acceptingAll && !AcceptAllBlocked)
+            {
+                <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="m5 10 3.2 3.2L15 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            }
+        </button>
+        <button type="button" class="btn btn-reset" @onclick="Reset">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path d="M3.5 10a6.5 6.5 0 1 0 1.8-4.45L3.5 7.5m0-4v4h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            Reset demo
+        </button>
+        <span role="status" class="bulk-status">@_bulkStatus</span>
+    </div>
+
+    <div class="cards">
+        @foreach (var item in _items)
+        {
+            <ChangeReviewCard @key="item.Id"
+                              Label="@item.Label"
+                              Before="@item.Before"
+                              After="@item.After"
+                              Accepted="@item.Accepted"
+                              Busy="@_acceptingAll"
+                              OnAccept="() => SaveAsync(item)" />
+        }
+    </div>
+</section>
+
+<section class="how-section" id="how-it-works">
+    <div class="how-heading">
+        <span class="section-kicker">A SIMPLE, SAFE FLOW</span>
+        <h2>See it. Review it. Accept it.</h2>
+        <p>No inline editing or surprises. The proposed value is clear before anything is saved.</p>
+    </div>
+    <div class="how-grid">
+        <article class="how-card">
+            <span class="how-number">01</span>
+            <div class="how-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5h16v13H4zM8 9h8M8 13h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </div>
+            <h3>Compare at a glance</h3>
+            <p>Original and proposed values are labeled and shown side by side.</p>
+        </article>
+        <article class="how-card">
+            <span class="how-number">02</span>
+            <div class="how-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M12 3.5 19 6v5.3c0 4.4-2.8 7.6-7 9.2-4.2-1.6-7-4.8-7-9.2V6l7-2.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" /><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </div>
+            <h3>Choose what to accept</h3>
+            <p>Accept changes individually or review the queue together.</p>
+        </article>
+        <article class="how-card">
+            <span class="how-number">03</span>
+            <div class="how-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.5 9.2 17 19 7" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </div>
+            <h3>Stay in control</h3>
+            <p>Saving and errors are visible, and failed changes can be retried.</p>
+        </article>
+    </div>
+</section>
+
+@code {
+    private sealed class Suggestion
+    {
+        public required int Id { get; init; }
+        public required string Label { get; init; }
+        public required string Before { get; init; }
+        public required string After { get; init; }
+        public bool Accepted { get; set; }
+        public int FailuresRemaining { get; set; }
+    }
+
+    private List<Suggestion> _items = CreateItems();
+    private bool _acceptingAll;
+    private string _bulkStatus = "";
+
+    private int ChangedCount => _items.Count(i => i.Before != i.After);
+    private int AcceptedCount => _items.Count(i => i.Accepted);
+    private int PendingCount => _items.Count(i => !i.Accepted && i.Before != i.After);
+    private int ProgressPercentage => ChangedCount == 0 ? 0 : AcceptedCount * 100 / ChangedCount;
+
+    private bool AcceptAllBlocked =>
+        _acceptingAll || PendingCount == 0;
+
+    private static List<Suggestion> CreateItems() =>
+    [
+        new() { Id = 1, Label = "Shorter filename",
+                Before = "Warehouse_Expansion_Final_Approved_v3.pdf",
+                After = "Warehouse_Expansion.pdf" },
+        new() { Id = 2, Label = "Imported data correction (fails once, then retry)",
+                Before = "Sacramento, CA 95814-0000",
+                After = "Sacramento, CA 95814",
+                FailuresRemaining = 1 },
+        new() { Id = 3, Label = "AI-generated title (HTML-looking text)",
+                Before = "<b>Quarterly</b> report & notes",
+                After = "<script>alert('x')</script> Quarterly Report" },
+        new() { Id = 4, Label = "Already correct",
+                Before = "Budget_2026.xlsx",
+                After = "Budget_2026.xlsx" },
+        new() { Id = 5, Label = "Very long filename",
+                Before = "Customer_Feedback_Survey_Results_Northwest_Region_Q3_2026_Final_Reviewed_By_Legal_And_Marketing_Copy_(2).docx",
+                After = "Customer_Feedback_NW_Q3_2026.docx" }
+    ];
+
+    // Simulates an authorized API save. In production, validate on the server.
+    private async Task SaveAsync(Suggestion item)
+    {
+        await Task.Delay(1200);
+        if (item.FailuresRemaining > 0)
+        {
+            item.FailuresRemaining--;
+            throw new InvalidOperationException("Simulated save failure.");
+        }
+        item.Accepted = true;
+    }
+
+    private async Task AcceptAll()
+    {
+        if (AcceptAllBlocked) return;
+
+        _acceptingAll = true;
+        _bulkStatus = "Accepting all pending changes…";
+        var failed = 0;
+
+        foreach (var item in _items.Where(i => !i.Accepted && i.Before != i.After).ToList())
+        {
+            try
+            {
+                await SaveAsync(item);
+            }
+            catch (Exception)
+            {
+                failed++;
+            }
+            StateHasChanged();
+        }
+
+        _acceptingAll = false;
+        _bulkStatus = failed == 0
+            ? "All pending changes accepted."
+            : $"{failed} change(s) could not be accepted. Retry individually or try Accept all again.";
+    }
+
+    private void Reset()
+    {
+        if (_acceptingAll) return;
+        _items = CreateItems();
+        _bulkStatus = "";
+    }
+}
